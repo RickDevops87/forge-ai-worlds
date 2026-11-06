@@ -1,0 +1,15 @@
+.env*
+!.env.example
+*.pem
+*.key
+*.p12
+__pycache__/
+.pytest_cache/
+.venv/
+node_modules/
+var/
+evidence/
+captures/
+logs/
+*.db
+*.sqlite*

@@ -1,0 +1,22 @@
+schema_version = 1
+
+[world]
+id = "email-action"
+title = "Email Content to Unauthorized Action"
+image = "localhost/forge-email-action:dev"
+
+[world.environment]
+FORGE_WORLD_MODE = "defended"
+
+[interface]
+container_port = 8080
+host_port = 18081
+
+[resources]
+memory = "1g"
+cpus = 1
+pids_limit = 128
+container_uid = 1000
+
+[storage]
+state_root = "../../var/world-runs/email-action-qwen"

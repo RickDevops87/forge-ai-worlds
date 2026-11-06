@@ -1,0 +1,10 @@
+FROM python:3.14-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 \
+    FORGE_WORLD_STATE=/world-state FORGE_WORLD_PORT=8080
+WORKDIR /app
+COPY --chown=1000:1000 worlds/codex-qualification/cat06.py /app/cat06.py
+COPY --chown=1000:1000 worlds/codex-qualification/world_server.py /app/world_server.py
+USER 1000:1000
+EXPOSE 8080
+CMD ["python", "/app/world_server.py"]

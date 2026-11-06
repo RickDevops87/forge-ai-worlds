@@ -1,0 +1,23 @@
+schema_version = 1
+
+[world]
+id = "cat06-rag-memory-vuln"
+title = "Category 6 RAG and Persistent Memory Vulnerable Control"
+image = "localhost/forge-cat06-rag-memory:dev"
+
+[world.environment]
+FORGE_WORLD_MODE = "vulnerable"
+FORGE_WORLD_SCENARIO = "cat06"
+
+[interface]
+container_port = 8080
+host_port = 18186
+
+[resources]
+memory = "512m"
+cpus = 1
+pids_limit = 64
+container_uid = 1000
+
+[storage]
+state_root = "../../var/world-runs/cat06-rag-memory-vulnerable"

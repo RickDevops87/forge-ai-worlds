@@ -1,0 +1,58 @@
+MCP World — Connector Integration and Tool Authority
+=====================================================
+
+A rootless Podman world with no external egress, modelling an MCP (Multi-Connection Protocol) server
+that AI agents may call to reach internal services. The world enforces connector allowlists,
+delegated identity, and tool-level permission checks — the security-gated counterpart to LangGraph's
+orchestration.
+
+The world is deliberately scoped: it does not model the full MCP spec, only the security-relevant
+subsets that Forge's categories 4 (MCP/connectors) and 2 (agent authorization) need to demonstrate.
+
+=== World Configuration ===
+- world_id: mcp-world
+- title: MCP Connector Integration
+- image: localhost/mcp-world:dev
+- container_port: 8080
+- host_port: 18080
+- memory: 2g
+- cpus: 2
+- pids_limit: 128
+- container_uid: 1000
+
+=== Environment (FORGE_WORLD_*) ===
+- FORGE_WORLD_MODE: defended (default; change to vulnerable in scenarios)
+- FORGE_WORLD_CONNECTOR_ALLOWLIST: comma-separated list of allowed connector domains (e.g., "api.github.com,*.npmjs.org")
+- FORGE_WORLD_CONNECTOR_DENYLIST: comma-separated list of denied domains
+- FORGE_WORLD_TOOL_PERMISSIONS: JSON-encoded dict of tool→allowed-resources (e.g., '{"read_email": "support@forge.test"}')
+
+=== Runtime ===
+- Internal network only (no external egress)
+- Read-only root filesystem
+- Per-run writable state directory (mounted read-write)
+- Unprivileged UID mapping
+- no-new-privileges, CPU/memory/PID limits
+- operator_token written to state/<run_id>/operator-token (mode 0600, owned by current user)
+
+=== Scenarios (run with PYTHONPATH=. python3 -m world_harness.cli --config worlds/mcp-world/world.toml start <run_id>) ===
+
+Benign: standard connector calls within allowlist, tool requests permitted per tool permissions.
+
+Injection: connector call with domain outside allowlist → should be denied; tool request with resource outside permitted scope → should be denied.
+
+Cross-identity: agent claims different principal → backend compares to authenticated identity and denies.
+
+=== Run lifecycle ===
+PYTHONPATH=. python3 -m world_harness.cli --config worlds/mcp-world/world.toml start <12-hex-run-id>
+PYTHONPATH=. python3 -m world_harness.cli --config worlds/mcp-world/world.toml status <run-id>
+PYTHONPATH=. python3 -m world_harness.cli --config worlds/mcp-world/world.toml stop <run-id>
+
+=== Evidence ===
+agent-evidence.jsonl — per-model-request/tool-call trace, mode, session identity
+events.jsonl — per-event trace (session_created, tool_request, tool_result, mode_change)
+outbox.jsonl — only if mode permits outbound writes (security-gated; never auto-send)
+
+=== Security posture ===
+Connector allowlist enforcement at network layer; tool-level permission checks before any execution;
+delegated identity verified against authenticated session; no external egress permitted unless
+explicitly allowed via FORGE_WORLD_CONNECTOR_ALLOWLIST; all outbound traffic blocked by default.

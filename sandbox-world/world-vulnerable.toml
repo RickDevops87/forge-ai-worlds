@@ -1,0 +1,23 @@
+schema_version = 1
+
+[world]
+id = "cat05-sandbox-vuln"
+title = "Category 5 Fixed-Job Sandbox Vulnerable Control"
+image = "localhost/forge-cat05-sandbox:dev"
+
+[world.environment]
+FORGE_WORLD_MODE = "vulnerable"
+FORGE_WORLD_SCENARIO = "cat05"
+
+[interface]
+container_port = 8080
+host_port = 18185
+
+[resources]
+memory = "512m"
+cpus = 1
+pids_limit = 64
+container_uid = 1000
+
+[storage]
+state_root = "../../var/world-runs/cat05-sandbox-vulnerable"

@@ -1,0 +1,27 @@
+MCP World — Containerfile
+==========================
+
+FROM python:3.14-slim AS builder
+
+RUN pip install --no-cache-dir \
+    langchain==1.4.4 \
+    langgraph==1.2.14 \
+    langgraph-prebuilt==1.1.0 \
+    langgraph-checkpoint==4.2.0 \
+    langgraph-runtime-inmem==0.36.0
+
+FROM python:3.14-slim
+
+COPY --from=builder /usr/local/lib/python3.14/site-packages /usr/local/lib/python3.14/site-packages
+COPY world.toml .
+COPY server.py .
+COPY scenarios/ ./scenarios/
+
+ENV FORGE_WORLD_MODE=defended
+ENV FORGE_WORLD_CONNECTOR_ALLOWLIST=api.github.com,*.npmjs.org
+ENV FORGE_WORLD_CONNECTOR_DENYLIST=
+
+EXPOSE 8080/TCP
+ENV host_port=18080
+
+CMD ["python3", "server.py"]

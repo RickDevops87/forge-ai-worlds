@@ -1,0 +1,23 @@
+schema_version = 1
+
+[world]
+id = "cat07-monitor-response"
+title = "Category 7 Security Monitoring and Response"
+image = "localhost/forge-cat07-monitor-response:dev"
+
+[world.environment]
+FORGE_WORLD_MODE = "defended"
+FORGE_WORLD_SCENARIO = "cat07"
+
+[interface]
+container_port = 8080
+host_port = 18087
+
+[resources]
+memory = "512m"
+cpus = 1
+pids_limit = 64
+container_uid = 1000
+
+[storage]
+state_root = "../../var/world-runs/cat07-monitor-response-defended"

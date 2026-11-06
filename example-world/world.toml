@@ -1,0 +1,19 @@
+schema_version = 1
+
+[world]
+id = "example-world"
+title = "Example synthetic environment"
+image = "localhost/forge-example-world:dev"
+
+[interface]
+container_port = 8080
+host_port = 18080
+
+[resources]
+memory = "2g"
+cpus = 2
+pids_limit = 256
+container_uid = 1000
+
+[storage]
+state_root = "../../var/world-runs/example-world"
